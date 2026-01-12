@@ -213,6 +213,38 @@ h1 {
   color: var(--muted);
 }
 
+.progress {
+  height: 10px;
+  border-radius: 999px;
+  background: #f1e3d5;
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  display: none;
+}
+
+.progress.active {
+  display: block;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, #f6c3a6, var(--accent), #f6c3a6);
+  animation: progress-move 1.4s ease-in-out infinite;
+}
+
+@keyframes progress-move {
+  0% {
+    transform: translateX(-60%);
+  }
+  50% {
+    transform: translateX(60%);
+  }
+  100% {
+    transform: translateX(160%);
+  }
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;

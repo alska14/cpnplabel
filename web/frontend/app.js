@@ -17,6 +17,7 @@ const fields = {
 const status = el("status");
 const rawText = el("rawText");
 const labelPreview = el("labelPreview");
+const progress = el("progress");
 
 const defaultRp =
   "YJN Europe s.r.o.\n6F, M.R. Stefanika, 010 01, Zilina, Slovak Republic";
@@ -69,6 +70,17 @@ const updatePreview = () => {
   labelPreview.textContent = buildLabelText();
 };
 
+const setProgress = (active, message) => {
+  if (message) {
+    status.textContent = message;
+  }
+  if (active) {
+    progress.classList.add("active");
+  } else {
+    progress.classList.remove("active");
+  }
+};
+
 Object.values(fields).forEach((input) => {
   input.addEventListener("input", updatePreview);
 });
@@ -99,7 +111,7 @@ el("btnOcr").addEventListener("click", async () => {
   const formData = new FormData();
   formData.append("file", file);
 
-  status.textContent = "Running OCR...";
+  setProgress(true, "Uploading file...");
   rawText.textContent = "";
 
   try {
@@ -113,6 +125,7 @@ el("btnOcr").addEventListener("click", async () => {
       throw new Error(detail || "OCR failed");
     }
 
+    setProgress(true, "Processing OCR...");
     const data = await resp.json();
     rawText.textContent = data.raw_text || "";
 
@@ -131,9 +144,9 @@ el("btnOcr").addEventListener("click", async () => {
     }
 
     updatePreview();
-    status.textContent = "OCR completed. Please review fields.";
+    setProgress(false, "OCR completed. Please review fields.");
   } catch (err) {
-    status.textContent = `OCR error: ${err.message}`;
+    setProgress(false, `OCR error: ${err.message}`);
   }
 });
 
@@ -158,7 +171,7 @@ el("btnPdf").addEventListener("click", async () => {
     net_content: fields.net_content.value,
   };
 
-  status.textContent = "Generating PDF...";
+  setProgress(true, "Generating PDF...");
 
   try {
     const resp = await fetch(`${apiBase}/api/pdf`, {
@@ -182,8 +195,8 @@ el("btnPdf").addEventListener("click", async () => {
     link.remove();
     window.URL.revokeObjectURL(url);
 
-    status.textContent = "PDF generated.";
+    setProgress(false, "PDF generated.");
   } catch (err) {
-    status.textContent = `PDF error: ${err.message}`;
+    setProgress(false, `PDF error: ${err.message}`);
   }
 });
