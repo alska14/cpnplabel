@@ -16,7 +16,7 @@ from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", os.path.join(BASE_DIR, "..", "..", "service-account-key.json"))
+SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
 GCS_BUCKET_NAME = os.getenv("GCS_BUCKET_NAME", "")
 DEFAULT_EU_RP = "YJN Europe s.r.o.\n6F, M.R. Stefanika, 010 01, Zilina, Slovak Republic"
 
@@ -44,15 +44,15 @@ class LabelForm(BaseModel):
 
 
 def _vision_client() -> vision.ImageAnnotatorClient:
-    if not os.path.exists(SERVICE_ACCOUNT_FILE):
-        raise RuntimeError("Missing service account file.")
-    return vision.ImageAnnotatorClient.from_service_account_json(SERVICE_ACCOUNT_FILE)
+    if SERVICE_ACCOUNT_FILE and os.path.exists(SERVICE_ACCOUNT_FILE):
+        return vision.ImageAnnotatorClient.from_service_account_json(SERVICE_ACCOUNT_FILE)
+    return vision.ImageAnnotatorClient()
 
 
 def _storage_client() -> storage.Client:
-    if not os.path.exists(SERVICE_ACCOUNT_FILE):
-        raise RuntimeError("Missing service account file.")
-    return storage.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
+    if SERVICE_ACCOUNT_FILE and os.path.exists(SERVICE_ACCOUNT_FILE):
+        return storage.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
+    return storage.Client()
 
 
 def _upload_to_gcs(storage_client: storage.Client, file_path: str, bucket_name: str) -> str:

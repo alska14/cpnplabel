@@ -1,29 +1,29 @@
-## ÃßÃµ ¹èÆ÷ Èå¸§ (Cloud Run + Vercel)
+ï»¿## ï¿½ï¿½Ãµ ï¿½ï¿½ï¿½ï¿½ ï¿½å¸§ (Cloud Run + Vercel)
 
-### 1) GCP Cloud Run (¹é¿£µå)
-1. GCP ÇÁ·ÎÁ§Æ® ¼±ÅÃ/»ý¼º
-2. API È°¼ºÈ­
+### 1) GCP Cloud Run (ï¿½é¿£ï¿½ï¿½)
+1. GCP ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½
+2. API È°ï¿½ï¿½È­
    - Cloud Run
    - Artifact Registry
    - Cloud Build
    - Vision API
    - Cloud Storage
-3. ¼­ºñ½º °èÁ¤¿¡ ±ÇÇÑ ºÎ¿©
-   - Vision API »ç¿ë
-   - Storage Object Admin (OCR PDF/TIFF Ã³¸® ½Ã ÇÊ¿ä)
+3. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½
+   - Vision API ï¿½ï¿½ï¿½
+   - Storage Object Admin (OCR PDF/TIFF Ã³ï¿½ï¿½ ï¿½ï¿½ ï¿½Ê¿ï¿½)
 
-### 2) ºôµå & ¹èÆ÷ (Cloud Run)
-PowerShell ±âÁØ:
+### 2) ï¿½ï¿½ï¿½ & ï¿½ï¿½ï¿½ï¿½ (Cloud Run)
+PowerShell ï¿½ï¿½ï¿½ï¿½:
 
 ```
-# ·Î±×ÀÎ
+# ï¿½Î±ï¿½ï¿½ï¿½
  gcloud auth login
  gcloud config set project YOUR_PROJECT_ID
 
-# ºôµå
+# ï¿½ï¿½ï¿½
  gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/cpsr-label
 
-# ¹èÆ÷
+# ï¿½ï¿½ï¿½ï¿½
  gcloud run deploy cpsr-label \
    --image gcr.io/YOUR_PROJECT_ID/cpsr-label \
    --platform managed \
@@ -32,16 +32,17 @@ PowerShell ±âÁØ:
    --set-env-vars GCS_BUCKET_NAME=YOUR_BUCKET_NAME
 ```
 
-ÁÖÀÇ: `service-account-key.json`Àº ºôµå ÀÌ¹ÌÁö¿¡ Æ÷ÇÔµË´Ï´Ù. ¿î¿µ¿¡¼­´Â Secret Manager·Î ´ëÃ¼ÇÏ´Â °ÍÀÌ ¾ÈÀüÇÕ´Ï´Ù.
+ï¿½ï¿½ï¿½ï¿½: `service-account-key.json`ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÔµË´Ï´ï¿½. ï¿½î¿µï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Secret Managerï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 
-### 3) Vercel (ÇÁ·ÐÆ®)
-- Vercel¿¡¼­ »õ ÇÁ·ÎÁ§Æ® »ý¼º
-- ·çÆ® Æú´õ ¼±ÅÃ ÈÄ ¹èÆ÷
-- `web/frontend`°¡ Á¤Àû ·çÆ®·Î ¼³Á¤µË´Ï´Ù (`vercel.json` Æ÷ÇÔ)
+### 3) Vercel (ï¿½ï¿½ï¿½ï¿½Æ®)
+- Vercelï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+- ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+- `web/frontend`ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ë´Ï´ï¿½ (`vercel.json` ï¿½ï¿½ï¿½ï¿½)
 
-¹èÆ÷ ÈÄ ÇÁ·ÐÆ®¿¡¼­ API Base URL¿¡ Cloud Run URL ÀÔ·Â
+ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ API Base URLï¿½ï¿½ Cloud Run URL ï¿½Ô·ï¿½
 
-### 4) ¿î¿µ Ã¼Å©¸®½ºÆ®
-- CORS µµ¸ÞÀÎ Á¦ÇÑ (ÇÊ¿ä ½Ã)
-- PDF Ãâ·Â È®ÀÎ
-- OCR ÀÔ·Â ÆÄÀÏ À¯Çü È®ÀÎ
+### 4) ï¿½î¿µ Ã¼Å©ï¿½ï¿½ï¿½ï¿½Æ®
+- CORS ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ê¿ï¿½ ï¿½ï¿½)
+- PDF ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+- OCR ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+

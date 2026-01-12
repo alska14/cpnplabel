@@ -10,9 +10,6 @@ COPY web/backend/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY web/backend /app/web/backend
-COPY service-account-key.json /app/service-account-key.json
-
-ENV GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
 ENV PORT=8080
 
 EXPOSE 8080
