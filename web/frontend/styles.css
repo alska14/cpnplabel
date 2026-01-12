@@ -139,11 +139,45 @@ h1 {
   margin-top: 24px;
 }
 
+.workspace {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  margin-top: 24px;
+  align-items: start;
+}
+
+.workspace-main {
+  min-width: 0;
+}
+
 .row {
   display: grid;
   grid-template-columns: auto auto 1fr;
   gap: 16px;
   align-items: center;
+}
+
+.dropzone {
+  border: 1px dashed #e2b79f;
+  border-radius: 20px;
+  padding: 18px;
+  background: #fff6ee;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dropzone.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(209, 107, 58, 0.15);
+}
+
+.dropzone-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .file {
@@ -265,6 +299,50 @@ h1 {
   justify-content: flex-end;
 }
 
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 420px;
+  overflow: auto;
+}
+
+.history-item {
+  background: #fffdf9;
+  border: 1px solid var(--edge);
+  border-radius: 14px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.history-item:hover {
+  border-color: #d9b59d;
+  transform: translateY(-1px);
+}
+
+.history-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin: 0 0 4px;
+}
+
+.history-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.ghost {
+  margin-top: 12px;
+  border: 1px solid var(--edge);
+  background: transparent;
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
 .preview {
   font-size: 14px;
   white-space: pre-line;
@@ -349,6 +427,10 @@ h1 {
 
 @media (max-width: 960px) {
   .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace {
     grid-template-columns: 1fr;
   }
 

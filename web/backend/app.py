@@ -3,13 +3,15 @@ import os
 import re
 import time
 import json
-from typing import Any, Dict
+from datetime import datetime, timezone
+from typing import Any, Dict, List
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from google.cloud import vision
 from google.cloud import storage
+from google.cloud import firestore
 from pydantic import BaseModel
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
@@ -19,6 +21,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
 GCS_BUCKET_NAME = os.getenv("GCS_BUCKET_NAME", "")
 DEFAULT_EU_RP = "YJN Europe s.r.o.\n6F, M.R. Stefanika, 010 01, Zilina, Slovak Republic"
+HISTORY_COLLECTION = "ocr_history"
+HISTORY_LIMIT = 10
 
 app = FastAPI(title="CPSR Label Web")
 app.add_middleware(
@@ -53,6 +57,70 @@ def _storage_client() -> storage.Client:
     if SERVICE_ACCOUNT_FILE and os.path.exists(SERVICE_ACCOUNT_FILE):
         return storage.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
     return storage.Client()
+
+
+def _firestore_client() -> firestore.Client:
+    if SERVICE_ACCOUNT_FILE and os.path.exists(SERVICE_ACCOUNT_FILE):
+        return firestore.Client.from_service_account_json(SERVICE_ACCOUNT_FILE)
+    return firestore.Client()
+
+
+def _fetch_history_items(db: firestore.Client) -> List[Dict[str, Any]]:
+    docs = (
+        db.collection(HISTORY_COLLECTION)
+        .order_by("created_at", direction=firestore.Query.DESCENDING)
+        .limit(HISTORY_LIMIT)
+        .stream()
+    )
+    items: List[Dict[str, Any]] = []
+    for doc in docs:
+        data = doc.to_dict()
+        data["id"] = doc.id
+        items.append(data)
+    return items
+
+
+def _trim_history(db: firestore.Client) -> None:
+    docs = (
+        db.collection(HISTORY_COLLECTION)
+        .order_by("created_at", direction=firestore.Query.DESCENDING)
+        .offset(HISTORY_LIMIT)
+        .stream()
+    )
+    for doc in docs:
+        doc.reference.delete()
+
+
+@app.get("/api/history")
+def get_history():
+    db = _firestore_client()
+    items = _fetch_history_items(db)
+    return JSONResponse({"items": items})
+
+
+@app.post("/api/history")
+def add_history(payload: Dict[str, Any]):
+    db = _firestore_client()
+    record = {
+        "title": payload.get("title", ""),
+        "meta": payload.get("meta", ""),
+        "raw_text": payload.get("raw_text", ""),
+        "form": payload.get("form", {}),
+        "created_at": datetime.now(timezone.utc),
+    }
+    db.collection(HISTORY_COLLECTION).add(record)
+    _trim_history(db)
+    items = _fetch_history_items(db)
+    return JSONResponse({"items": items})
+
+
+@app.delete("/api/history")
+def clear_history():
+    db = _firestore_client()
+    docs = db.collection(HISTORY_COLLECTION).stream()
+    for doc in docs:
+        doc.reference.delete()
+    return JSONResponse({"items": []})
 
 
 def _upload_to_gcs(storage_client: storage.Client, file_path: str, bucket_name: str) -> str:
