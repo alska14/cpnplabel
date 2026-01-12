@@ -23,6 +23,17 @@
       </div>
     </header>
 
+    <aside class="panel history">
+      <div class="panel-header">
+        <h2>히스토리</h2>
+        <p>이전에 분석한 결과를 불러옵니다.</p>
+      </div>
+      <div class="panel-body">
+        <div class="history-list" id="historyList"></div>
+        <button class="ghost" id="clearHistory" type="button">히스토리 비우기</button>
+      </div>
+    </aside>
+
     <section class="panel">
       <div class="panel-header">
         <h2>1. CPSR Part B 업로드</h2>
@@ -47,20 +58,7 @@
       </div>
     </section>
 
-    <section class="workspace">
-      <aside class="panel history">
-        <div class="panel-header">
-          <h2>히스토리</h2>
-          <p>이전에 분석한 결과를 불러옵니다.</p>
-        </div>
-        <div class="panel-body">
-          <div class="history-list" id="historyList"></div>
-          <button class="ghost" id="clearHistory" type="button">히스토리 비우기</button>
-        </div>
-      </aside>
-
-      <div class="workspace-main">
-        <section class="grid">
+    <section class="grid">
       <div class="panel">
         <div class="panel-header" id="parsedSection">
           <h2>2. 인식 결과</h2>
@@ -133,8 +131,6 @@
             <pre class="raw" id="rawText"></pre>
           </details>
         </div>
-      </div>
-        </section>
       </div>
     </section>
 
