@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap");
 
 :root {
   --bg: #f8f1e7;
@@ -58,7 +58,7 @@ body {
 }
 
 h1 {
-  font-family: "Playfair Display", serif;
+  font-family: "Cormorant Garamond", serif;
   font-size: 44px;
   line-height: 1.1;
   margin: 0 0 16px;
@@ -91,7 +91,7 @@ h1 {
 }
 
 .hero-title {
-  font-family: "Playfair Display", serif;
+  font-family: "Cormorant Garamond", serif;
   font-size: 24px;
   margin: 0 0 10px;
 }
@@ -317,24 +317,25 @@ h1 {
 
 .toast {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  left: 50%;
+  top: 50%;
   background: #1f1b16;
   color: #f8f1e7;
   padding: 14px 18px;
   border-radius: 14px;
   box-shadow: 0 16px 30px rgba(0, 0, 0, 0.25);
   opacity: 0;
-  transform: translateY(10px);
+  transform: translate(-50%, -50%) scale(0.98);
   transition: opacity 0.25s ease, transform 0.25s ease;
   pointer-events: none;
   max-width: 320px;
   font-size: 14px;
+  text-align: center;
 }
 
 .toast.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, -50%) scale(1);
 }
 
 @media (max-width: 960px) {
