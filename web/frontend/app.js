@@ -155,7 +155,10 @@ el("btnOcr").addEventListener("click", async () => {
     updatePreview();
     setProgress(false, "OCR 완료. 내용을 확인해 주세요.");
     showToast("OCR 분석이 완료되었습니다.");
-    fields.product_name.scrollIntoView({ behavior: "smooth", block: "start" });
+    const parsedSection = document.getElementById("parsedSection");
+    if (parsedSection) {
+      parsedSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   } catch (err) {
     setProgress(false, `OCR 오류: ${err.message}`);
   }

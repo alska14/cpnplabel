@@ -22,9 +22,30 @@
       </div>
     </header>
 
+    <section class="panel">
+      <div class="panel-header">
+        <h2>1. CPSR Part B 업로드</h2>
+        <p>PDF 또는 이미지 파일(JPG/PNG/TIFF)을 지원합니다.</p>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="file">
+            <input id="fileInput" type="file" accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.bmp,.webp" />
+            <span>파일 선택</span>
+          </label>
+          <button id="btnOcr" class="primary">OCR 실행</button>
+          <input id="apiBase" type="hidden" />
+        </div>
+        <div class="status" id="status">업로드 대기 중입니다.</div>
+        <div class="progress" id="progress" aria-hidden="true">
+          <div class="progress-bar"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="grid">
       <div class="panel">
-        <div class="panel-header">
+        <div class="panel-header" id="parsedSection">
           <h2>2. 인식 결과</h2>
           <p>내보내기 전에 내용을 수정하세요.</p>
         </div>
@@ -98,26 +119,6 @@
       </div>
     </section>
 
-    <section class="panel">
-      <div class="panel-header">
-        <h2>1. CPSR Part B 업로드</h2>
-        <p>PDF 또는 이미지 파일(JPG/PNG/TIFF)을 지원합니다.</p>
-      </div>
-      <div class="panel-body">
-        <div class="row">
-          <label class="file">
-            <input id="fileInput" type="file" accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.bmp,.webp" />
-            <span>파일 선택</span>
-          </label>
-          <button id="btnOcr" class="primary">OCR 실행</button>
-          <input id="apiBase" type="hidden" />
-        </div>
-        <div class="status" id="status">업로드 대기 중입니다.</div>
-        <div class="progress" id="progress" aria-hidden="true">
-          <div class="progress-bar"></div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <div class="toast" id="toast" aria-live="polite"></div>
