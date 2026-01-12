@@ -57,6 +57,13 @@ body {
   margin: 0 0 12px;
 }
 
+.brand-logo {
+  width: min(220px, 70%);
+  height: auto;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.12));
+}
+
 h1 {
   font-family: "Cormorant Garamond", serif;
   font-size: 44px;
