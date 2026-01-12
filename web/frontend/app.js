@@ -18,6 +18,7 @@ const status = el("status");
 const rawText = el("rawText");
 const labelPreview = el("labelPreview");
 const progress = el("progress");
+const toast = el("toast");
 
 const defaultRp =
   "YJN Europe s.r.o.\n6F, M.R. Stefanika, 010 01, Zilina, Slovak Republic";
@@ -79,6 +80,14 @@ const setProgress = (active, message) => {
   } else {
     progress.classList.remove("active");
   }
+};
+
+const showToast = (message) => {
+  toast.textContent = message;
+  toast.classList.add("show");
+  window.setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2200);
 };
 
 Object.values(fields).forEach((input) => {
@@ -145,7 +154,7 @@ el("btnOcr").addEventListener("click", async () => {
 
     updatePreview();
     setProgress(false, "OCR 완료. 내용을 확인해 주세요.");
-    window.alert("OCR 분석이 완료되었습니다.");
+    showToast("OCR 분석이 완료되었습니다.");
     fields.product_name.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
     setProgress(false, `OCR 오류: ${err.message}`);
