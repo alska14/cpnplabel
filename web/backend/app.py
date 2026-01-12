@@ -27,7 +27,11 @@ HISTORY_LIMIT = 10
 app = FastAPI(title="CPSR Label Web")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://cpnplabel.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:5500",
+    ],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
