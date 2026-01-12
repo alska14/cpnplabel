@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CPSR Label Studio</title>
+  <title>CPSR 라벨 스튜디오</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -11,32 +11,32 @@
   <main class="shell">
     <header class="hero">
       <div>
-        <p class="eyebrow">CPSR LABEL STUDIO</p>
-        <h1>Turn CPSR Part B into a ready-to-send label preview.</h1>
-        <p class="subhead">Upload a PDF or image, review OCR results, and export a text-selectable PDF label.</p>
+        <p class="eyebrow">CPSR 라벨 스튜디오</p>
+        <h1>CPSR Part B를 라벨 예시안으로 빠르게 변환하세요.</h1>
+        <p class="subhead">PDF 또는 이미지를 업로드하고 OCR 결과를 확인한 뒤, 텍스트가 선택되는 PDF 라벨을 생성합니다.</p>
       </div>
       <div class="hero-card">
-        <div class="badge">OCR + Label</div>
-        <p class="hero-title">Brand-ready output</p>
-        <p class="hero-desc">Fast, consistent labels built for EU cosmetics compliance review.</p>
+        <div class="badge">OCR + 라벨</div>
+        <p class="hero-title">브랜드 제출용 출력</p>
+        <p class="hero-desc">EU 화장품 컴플라이언스 검토에 맞춘 빠르고 일관된 라벨 예시안을 제공합니다.</p>
       </div>
     </header>
 
     <section class="panel">
       <div class="panel-header">
-        <h2>1. Upload CPSR Part B</h2>
-        <p>PDF or image files (JPG/PNG/TIFF).</p>
+        <h2>1. CPSR Part B 업로드</h2>
+        <p>PDF 또는 이미지 파일(JPG/PNG/TIFF)을 지원합니다.</p>
       </div>
       <div class="panel-body">
         <div class="row">
           <label class="file">
             <input id="fileInput" type="file" accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.bmp,.webp" />
-            <span>Select file</span>
+            <span>파일 선택</span>
           </label>
-          <button id="btnOcr" class="primary">Run OCR</button>
+          <button id="btnOcr" class="primary">OCR 실행</button>
           <input id="apiBase" type="hidden" />
         </div>
-        <div class="status" id="status">Waiting for upload.</div>
+        <div class="status" id="status">업로드 대기 중입니다.</div>
         <div class="progress" id="progress" aria-hidden="true">
           <div class="progress-bar"></div>
         </div>
@@ -46,73 +46,75 @@
     <section class="grid">
       <div class="panel">
         <div class="panel-header">
-          <h2>2. Parsed Fields</h2>
-          <p>Edit anything before exporting.</p>
+          <h2>2. 인식 결과</h2>
+          <p>내보내기 전에 내용을 수정하세요.</p>
         </div>
         <div class="panel-body form">
           <div class="field">
-            <label>Product Name</label>
+            <label>제품명</label>
             <input id="productName" type="text" />
           </div>
           <div class="field">
-            <label>Product Function</label>
+            <label>제품 기능</label>
             <input id="functionClaim" type="text" />
           </div>
           <div class="field">
-            <label>How to Use</label>
+            <label>사용 방법</label>
             <textarea id="usageInstructions" rows="3"></textarea>
           </div>
           <div class="field">
-            <label>Warnings / Precautions</label>
+            <label>주의 사항</label>
             <textarea id="warningsPrecautions" rows="3"></textarea>
           </div>
           <div class="field">
-            <label>Ingredients (INCI)</label>
+            <label>성분 (INCI)</label>
             <textarea id="inciIngredients" rows="4"></textarea>
           </div>
           <div class="field">
-            <label>Distributor</label>
+            <label>유통사</label>
             <input id="distributor" type="text" />
           </div>
           <div class="field">
-            <label>EU Responsible Person</label>
+            <label>EU 책임자</label>
             <textarea id="euResponsiblePerson" rows="3"></textarea>
           </div>
           <div class="field split">
             <div>
-              <label>Country of Origin</label>
+              <label>원산지</label>
               <input id="countryOfOrigin" type="text" />
             </div>
             <div>
-              <label>Batch / Lot</label>
+              <label>배치/LOT</label>
               <input id="batchLot" type="text" />
             </div>
           </div>
           <div class="field split">
             <div>
-              <label>Expiry Date</label>
+              <label>사용기한</label>
               <input id="expiryDate" type="text" />
             </div>
             <div>
-              <label>Net Content</label>
+              <label>내용량</label>
               <input id="netContent" type="text" />
             </div>
           </div>
           <div class="actions">
-            <button id="btnPdf" class="primary">Generate PDF</button>
+            <button id="btnPdf" class="primary">PDF 생성</button>
           </div>
         </div>
       </div>
 
       <div class="panel">
         <div class="panel-header">
-          <h2>3. Label Preview</h2>
-          <p>Text label + OCR raw output.</p>
+          <h2>3. 라벨 미리보기</h2>
+          <p>라벨 텍스트를 확인하세요.</p>
         </div>
         <div class="panel-body">
           <div class="preview" id="labelPreview"></div>
-          <div class="divider"></div>
-          <pre class="raw" id="rawText"></pre>
+          <details class="raw-wrap">
+            <summary>OCR 원문</summary>
+            <pre class="raw" id="rawText"></pre>
+          </details>
         </div>
       </div>
     </section>

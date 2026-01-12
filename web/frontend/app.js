@@ -100,18 +100,18 @@ el("btnOcr").addEventListener("click", async () => {
   const file = el("fileInput").files[0];
   const apiBase = getApiBase();
   if (!file) {
-    status.textContent = "Please select a file first.";
+    status.textContent = "먼저 파일을 선택해 주세요.";
     return;
   }
   if (!apiBase) {
-    status.textContent = "Please enter the API base URL.";
+    status.textContent = "API 주소가 설정되지 않았습니다.";
     return;
   }
 
   const formData = new FormData();
   formData.append("file", file);
 
-  setProgress(true, "Uploading file...");
+  setProgress(true, "파일 업로드 중...");
   rawText.textContent = "";
 
   try {
@@ -125,7 +125,7 @@ el("btnOcr").addEventListener("click", async () => {
       throw new Error(detail || "OCR failed");
     }
 
-    setProgress(true, "Processing OCR...");
+    setProgress(true, "OCR 처리 중...");
     const data = await resp.json();
     rawText.textContent = data.raw_text || "";
 
@@ -144,16 +144,16 @@ el("btnOcr").addEventListener("click", async () => {
     }
 
     updatePreview();
-    setProgress(false, "OCR completed. Please review fields.");
+    setProgress(false, "OCR 완료. 내용을 확인해 주세요.");
   } catch (err) {
-    setProgress(false, `OCR error: ${err.message}`);
+    setProgress(false, `OCR 오류: ${err.message}`);
   }
 });
 
 el("btnPdf").addEventListener("click", async () => {
   const apiBase = getApiBase();
   if (!apiBase) {
-    status.textContent = "Please enter the API base URL.";
+    status.textContent = "API 주소가 설정되지 않았습니다.";
     return;
   }
 
@@ -171,7 +171,7 @@ el("btnPdf").addEventListener("click", async () => {
     net_content: fields.net_content.value,
   };
 
-  setProgress(true, "Generating PDF...");
+  setProgress(true, "PDF 생성 중...");
 
   try {
     const resp = await fetch(`${apiBase}/api/pdf`, {
@@ -195,8 +195,8 @@ el("btnPdf").addEventListener("click", async () => {
     link.remove();
     window.URL.revokeObjectURL(url);
 
-    setProgress(false, "PDF generated.");
+    setProgress(false, "PDF 생성 완료.");
   } catch (err) {
-    setProgress(false, `PDF error: ${err.message}`);
+    setProgress(false, `PDF 오류: ${err.message}`);
   }
 });
