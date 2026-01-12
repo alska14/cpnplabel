@@ -75,10 +75,14 @@ Object.values(fields).forEach((input) => {
 
 updatePreview();
 
+const DEFAULT_API_BASE = "https://cpsr-label-weauxnazsq-du.a.run.app";
+
 const getApiBase = () => {
   const raw = el("apiBase").value.trim();
-  return raw ? raw.replace(/\/$/, "") : "";
+  return raw ? raw.replace(/\/$/, "") : DEFAULT_API_BASE;
 };
+
+el("apiBase").value = DEFAULT_API_BASE;
 
 el("btnOcr").addEventListener("click", async () => {
   const file = el("fileInput").files[0];
