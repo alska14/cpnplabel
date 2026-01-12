@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.venv/
+
+# Local secrets
+service-account-key.json
+
+# Generated
+web/backend/tmp/

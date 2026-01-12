@@ -1,0 +1,257 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=Space+Grotesk:wght@400;500;600&display=swap");
+
+:root {
+  --bg: #f8f1e7;
+  --panel: #fff8f0;
+  --ink: #1f1b16;
+  --muted: #6f6154;
+  --accent: #d16b3a;
+  --accent-dark: #9d4a25;
+  --edge: #ead8c5;
+  --shadow: rgba(31, 27, 22, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at top, #ffe8d6 0%, #f8f1e7 42%, #f2e8da 100%);
+  min-height: 100vh;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(209, 107, 58, 0.22), transparent 45%),
+              radial-gradient(circle at 80% 0%, rgba(33, 115, 102, 0.2), transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(242, 199, 110, 0.3), transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 32px;
+  align-items: center;
+  margin-bottom: 36px;
+}
+
+.eyebrow {
+  letter-spacing: 0.26em;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+h1 {
+  font-family: "Fraunces", serif;
+  font-size: 44px;
+  line-height: 1.1;
+  margin: 0 0 16px;
+}
+
+.subhead {
+  margin: 0;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.hero-card {
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  padding: 28px;
+  border-radius: 24px;
+  box-shadow: 0 18px 40px var(--shadow);
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  background: var(--accent);
+  color: white;
+  font-size: 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 12px;
+}
+
+.hero-title {
+  font-family: "Fraunces", serif;
+  font-size: 24px;
+  margin: 0 0 10px;
+}
+
+.hero-desc {
+  margin: 0;
+  color: var(--muted);
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 16px 36px var(--shadow);
+}
+
+.panel-header h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.panel-header p {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+.panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.file {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px dashed var(--accent);
+  padding: 10px 18px;
+  background: #fff5eb;
+  cursor: pointer;
+}
+
+.file input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.field input,
+.field textarea {
+  border-radius: 14px;
+  border: 1px solid var(--edge);
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  background: #fffdf9;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.primary {
+  border: none;
+  background: var(--accent);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 10px 18px rgba(209, 107, 58, 0.25);
+}
+
+.primary:hover {
+  background: var(--accent-dark);
+}
+
+.status {
+  background: #fff5eb;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--edge);
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.preview {
+  font-size: 14px;
+  white-space: pre-line;
+  background: #fffdf9;
+  border-radius: 18px;
+  border: 1px solid var(--edge);
+  padding: 16px;
+  min-height: 260px;
+}
+
+.raw {
+  background: #1f1b16;
+  color: #f8f1e7;
+  padding: 14px;
+  border-radius: 16px;
+  min-height: 220px;
+  overflow: auto;
+}
+
+.divider {
+  height: 1px;
+  background: var(--edge);
+}
+
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+}

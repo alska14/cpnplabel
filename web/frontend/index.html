@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CPSR Label Studio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="backdrop"></div>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">CPSR LABEL STUDIO</p>
+        <h1>Turn CPSR Part B into a ready-to-send label preview.</h1>
+        <p class="subhead">Upload a PDF or image, review OCR results, and export a text-selectable PDF label.</p>
+      </div>
+      <div class="hero-card">
+        <div class="badge">OCR + Label</div>
+        <p class="hero-title">Brand-ready output</p>
+        <p class="hero-desc">Fast, consistent labels built for EU cosmetics compliance review.</p>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>1. Upload CPSR Part B</h2>
+        <p>PDF or image files (JPG/PNG/TIFF).</p>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="file">
+            <input id="fileInput" type="file" accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.bmp,.webp" />
+            <span>Select file</span>
+          </label>
+          <button id="btnOcr" class="primary">Run OCR</button>
+          <div class="field">
+            <label>API Base URL</label>
+            <input id="apiBase" type="text" placeholder="https://your-cloud-run-url" />
+          </div>
+        </div>
+        <div class="status" id="status">Waiting for upload.</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h2>2. Parsed Fields</h2>
+          <p>Edit anything before exporting.</p>
+        </div>
+        <div class="panel-body form">
+          <div class="field">
+            <label>Product Name</label>
+            <input id="productName" type="text" />
+          </div>
+          <div class="field">
+            <label>Product Function</label>
+            <input id="functionClaim" type="text" />
+          </div>
+          <div class="field">
+            <label>How to Use</label>
+            <textarea id="usageInstructions" rows="3"></textarea>
+          </div>
+          <div class="field">
+            <label>Warnings / Precautions</label>
+            <textarea id="warningsPrecautions" rows="3"></textarea>
+          </div>
+          <div class="field">
+            <label>Ingredients (INCI)</label>
+            <textarea id="inciIngredients" rows="4"></textarea>
+          </div>
+          <div class="field">
+            <label>Distributor</label>
+            <input id="distributor" type="text" />
+          </div>
+          <div class="field">
+            <label>EU Responsible Person</label>
+            <textarea id="euResponsiblePerson" rows="3"></textarea>
+          </div>
+          <div class="field split">
+            <div>
+              <label>Country of Origin</label>
+              <input id="countryOfOrigin" type="text" />
+            </div>
+            <div>
+              <label>Batch / Lot</label>
+              <input id="batchLot" type="text" />
+            </div>
+          </div>
+          <div class="field split">
+            <div>
+              <label>Expiry Date</label>
+              <input id="expiryDate" type="text" />
+            </div>
+            <div>
+              <label>Net Content</label>
+              <input id="netContent" type="text" />
+            </div>
+          </div>
+          <div class="actions">
+            <button id="btnPdf" class="primary">Generate PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h2>3. Label Preview</h2>
+          <p>Text label + OCR raw output.</p>
+        </div>
+        <div class="panel-body">
+          <div class="preview" id="labelPreview"></div>
+          <div class="divider"></div>
+          <pre class="raw" id="rawText"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
