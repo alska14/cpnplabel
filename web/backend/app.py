@@ -123,6 +123,17 @@ def clear_history():
     return JSONResponse({"items": []})
 
 
+@app.delete("/api/history/{item_id}")
+def delete_history_item(item_id: str):
+    db = _firestore_client()
+    doc_ref = db.collection(HISTORY_COLLECTION).document(item_id)
+    if not doc_ref.get().exists:
+        raise HTTPException(status_code=404, detail="History item not found.")
+    doc_ref.delete()
+    items = _fetch_history_items(db)
+    return JSONResponse({"items": items})
+
+
 def _upload_to_gcs(storage_client: storage.Client, file_path: str, bucket_name: str) -> str:
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(os.path.basename(file_path))

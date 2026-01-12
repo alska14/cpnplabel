@@ -115,13 +115,15 @@ const renderHistory = (items) => {
     return;
   }
   items.forEach((item, index) => {
-    const card = document.createElement("button");
-    card.type = "button";
+    const card = document.createElement("div");
     card.className = "history-item";
     card.dataset.index = String(index);
     card.innerHTML = `
-      <p class="history-title">${item.title}</p>
-      <p class="history-meta">${item.meta}</p>
+      <div class="history-content">
+        <p class="history-title">${item.title}</p>
+        <p class="history-meta">${item.meta}</p>
+      </div>
+      <button class="history-delete" type="button" data-id="${item.id || ""}">삭제</button>
     `;
     historyList.appendChild(card);
   });
@@ -326,6 +328,30 @@ el("btnOcr").addEventListener("click", async () => {
 });
 
 historyList.addEventListener("click", (event) => {
+  const deleteBtn = event.target.closest(".history-delete");
+  if (deleteBtn) {
+    const id = deleteBtn.dataset.id;
+    if (!id) {
+      return;
+    }
+    const apiBase = getApiBase();
+    fetch(`${apiBase}/api/history/${id}`, { method: "DELETE" })
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error("delete failed");
+        }
+        return resp.json();
+      })
+      .then((data) => {
+        historyCache = data.items || [];
+        renderHistory(historyCache);
+        showToast("항목이 삭제되었습니다.");
+      })
+      .catch(() => {
+        showToast("삭제에 실패했습니다.");
+      });
+    return;
+  }
   const target = event.target.closest(".history-item");
   if (!target) {
     return;
