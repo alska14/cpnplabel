@@ -69,6 +69,17 @@ def _firestore_client() -> firestore.Client:
     return firestore.Client()
 
 
+def _serialize_history_item(data: Dict[str, Any]) -> Dict[str, Any]:
+    serialized = dict(data)
+    created_at = serialized.get("created_at")
+    if created_at is not None:
+        try:
+            serialized["created_at"] = created_at.isoformat()
+        except Exception:
+            serialized["created_at"] = str(created_at)
+    return serialized
+
+
 def _fetch_history_items(db: firestore.Client) -> List[Dict[str, Any]]:
     docs = (
         db.collection(HISTORY_COLLECTION)
@@ -79,6 +90,7 @@ def _fetch_history_items(db: firestore.Client) -> List[Dict[str, Any]]:
     items: List[Dict[str, Any]] = []
     for doc in docs:
         data = doc.to_dict()
+        data = _serialize_history_item(data)
         data["id"] = doc.id
         items.append(data)
     return items
