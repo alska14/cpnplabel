@@ -124,13 +124,25 @@
       </div>
 
       <div class="panel">
-        <div class="panel-header">
-          <h2>3. 라벨 미리보기</h2>
-          <p>라벨 텍스트를 확인하세요.</p>
+      <div class="panel-header">
+        <h2>3. 라벨 미리보기</h2>
+        <p>라벨 텍스트를 확인하세요.</p>
+      </div>
+      <div class="panel-body">
+        <div class="lang-picker">
+          <p class="lang-title">다국어 라벨</p>
+          <div class="lang-options" id="langOptions">
+            <label><input type="checkbox" value="en" /> English</label>
+            <label><input type="checkbox" value="de" /> Deutsch</label>
+            <label><input type="checkbox" value="fr" /> Français</label>
+            <label><input type="checkbox" value="it" /> Italiano</label>
+            <label><input type="checkbox" value="es" /> Español</label>
+          </div>
+          <button class="ghost" id="translateBtn" type="button">번역 적용</button>
+          <p class="lang-hint">INCI 성분은 번역하지 않습니다.</p>
         </div>
-        <div class="panel-body">
-          <div class="preview" id="labelPreview"></div>
-          <details class="raw-wrap">
+        <div class="preview" id="labelPreview"></div>
+        <details class="raw-wrap">
             <summary>OCR 원문</summary>
             <pre class="raw" id="rawText"></pre>
           </details>

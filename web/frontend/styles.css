@@ -384,6 +384,42 @@ h1 {
   min-height: 260px;
 }
 
+.lang-picker {
+  border: 1px dashed var(--edge);
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: #fff7ee;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lang-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.lang-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px 12px;
+  font-size: 13px;
+}
+
+.lang-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lang-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
 .preview .warning {
   color: #c2472f;
   font-weight: 600;

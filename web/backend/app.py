@@ -3,6 +3,7 @@ import os
 import re
 import time
 import json
+import html
 from datetime import datetime, timezone
 from typing import Any, Dict, List
 
@@ -14,6 +15,7 @@ from google.cloud import storage
 from google.cloud import firestore
 from PyPDF2 import PdfReader
 from pydantic import BaseModel
+import requests
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
@@ -52,6 +54,20 @@ class LabelForm(BaseModel):
     net_content: str = ""
 
 
+class TranslationRequest(BaseModel):
+    targets: List[str]
+    fields: Dict[str, str]
+
+
+class PdfSection(BaseModel):
+    title: str
+    text: str
+
+
+class PdfMultiRequest(BaseModel):
+    sections: List[PdfSection]
+
+
 def _vision_client() -> vision.ImageAnnotatorClient:
     if SERVICE_ACCOUNT_FILE and os.path.exists(SERVICE_ACCOUNT_FILE):
         return vision.ImageAnnotatorClient.from_service_account_json(SERVICE_ACCOUNT_FILE)
@@ -79,6 +95,25 @@ def _serialize_history_item(data: Dict[str, Any]) -> Dict[str, Any]:
         except Exception:
             serialized["created_at"] = str(created_at)
     return serialized
+
+
+def _translate_texts(texts: List[str], target: str) -> List[str]:
+    api_key = os.getenv("TRANSLATE_API_KEY", "")
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Translate API key missing.")
+    url = f"https://translation.googleapis.com/language/translate/v2?key={api_key}"
+    payload = {"q": texts, "target": target, "format": "text"}
+    try:
+        resp = requests.post(url, json=payload, timeout=15)
+        resp.raise_for_status()
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Translate API error: {exc}")
+    data = resp.json()
+    translations = data.get("data", {}).get("translations", [])
+    results = []
+    for item in translations:
+        results.append(html.unescape(item.get("translatedText", "")))
+    return results
 
 
 def _fetch_history_items(db: firestore.Client) -> List[Dict[str, Any]]:
@@ -149,6 +184,19 @@ def delete_history_item(item_id: str):
     doc_ref.delete()
     items = _fetch_history_items(db)
     return JSONResponse({"items": items})
+
+
+@app.post("/api/translate")
+def translate(request: TranslationRequest):
+    fields = request.fields or {}
+    targets = request.targets or []
+    keys = list(fields.keys())
+    values = [fields.get(key, "") for key in keys]
+    result: Dict[str, Dict[str, str]] = {}
+    for target in targets:
+        translated_values = _translate_texts(values, target)
+        result[target] = dict(zip(keys, translated_values))
+    return JSONResponse({"translations": result})
 
 
 def _upload_to_gcs(storage_client: storage.Client, file_path: str, bucket_name: str) -> str:
@@ -443,3 +491,30 @@ async def ocr(file: UploadFile = File(...)):
 async def create_pdf(form: LabelForm):
     pdf_bytes = generate_pdf(form)
     return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf")
+
+
+@app.post("/api/pdf-multi")
+async def create_pdf_multi(request: PdfMultiRequest):
+    buffer = io.BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+    margin = 18 * mm
+    y = height - margin
+
+    pdf.setFont("Helvetica-Bold", 13)
+    for section in request.sections:
+        pdf.drawString(margin, y, section.title)
+        y -= 18
+        pdf.setFont("Helvetica", 11)
+        y = _draw_multiline_text(pdf, section.text, margin, y, width - 2 * margin, leading=14)
+        y -= 16
+        if y < margin + 60:
+            pdf.showPage()
+            y = height - margin
+            pdf.setFont("Helvetica-Bold", 13)
+        else:
+            pdf.setFont("Helvetica-Bold", 13)
+
+    pdf.save()
+    buffer.seek(0)
+    return StreamingResponse(io.BytesIO(buffer.read()), media_type="application/pdf")

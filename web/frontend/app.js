@@ -23,6 +23,8 @@ const historyList = el("historyList");
 const clearHistory = el("clearHistory");
 const dropzone = el("dropzone");
 const fileInput = el("fileInput");
+const langOptions = el("langOptions");
+const translateBtn = el("translateBtn");
 
 const defaultRp =
   "YJN Europe s.r.o.\n6F, M.R. Stefanika, 010 01, Zilina, Slovak Republic";
@@ -49,46 +51,65 @@ const escapeHtml = (value) =>
 
 const oneLine = (text) => text.replace(/\s+/g, " ").trim();
 
-const buildLabelLines = () => {
+const buildLabelText = () => {
   const distributorFallback =
     "Distributor 정보가 없을 경우, 유럽 유통용 최종 라벨 검토 불가.";
   const distributorValue = fields.distributor.value.trim();
   const distributorText = distributorValue || distributorFallback;
 
-  return [
-    { label: "YJN Partners CPSR Label Example", value: "" },
-    { label: "1. Product Name:", value: fields.product_name.value || "N/A" },
-    { label: "2. Product Function:", value: fields.function_claim.value || "N/A" },
-    { label: "3. How to Use:", value: fields.usage_instructions.value || "N/A" },
-    { label: "4. Warning / Precautions:", value: fields.warnings_precautions.value || "N/A" },
-    { label: "5. Ingredients (INCI):", value: fields.inci_ingredients.value || "N/A" },
-    { label: "6. Expiry Date:", value: fields.expiry_date.value || "Shown on the package" },
-    { label: "7. EU Responsible Person:", value: fields.eu_responsible_person.value || defaultRp },
-    {
-      label: "8. Distributor Name and Address:",
-      value: oneLine(distributorText),
-      isWarning: !distributorValue,
-    },
-    { label: "9. Country of Origin:", value: fields.country_of_origin.value || "Made in Korea" },
-    { label: "10. Batch Number:", value: fields.batch_lot.value || "Shown on the package" },
-    { label: "11. Nominal Quantities:", value: fields.net_content.value || "N/A" },
+  const lines = [
+    "YJN Partners CPSR Label Example",
+    "",
+    "1. Product Name:",
+    fields.product_name.value || "N/A",
+    "",
+    "2. Product Function:",
+    fields.function_claim.value || "N/A",
+    "",
+    "3. How to Use:",
+    fields.usage_instructions.value || "N/A",
+    "",
+    "4. Warning / Precautions:",
+    fields.warnings_precautions.value || "N/A",
+    "",
+    "5. Ingredients (INCI):",
+    fields.inci_ingredients.value || "N/A",
+    "",
+    "6. Expiry Date:",
+    fields.expiry_date.value || "Shown on the package",
+    "",
+    "7. EU Responsible Person:",
+    fields.eu_responsible_person.value || defaultRp,
+    "",
+    "8. Distributor Name and Address:",
+    distributorText,
+    "",
+    "9. Country of Origin:",
+    fields.country_of_origin.value || "Made in Korea",
+    "",
+    "10. Batch Number:",
+    fields.batch_lot.value || "Shown on the package",
+    "",
+    "11. Nominal Quantities:",
+    fields.net_content.value || "N/A",
   ];
+
+  return lines.join("\n");
 };
 
 const updatePreview = () => {
-  const lines = buildLabelLines();
-  const html = lines
-    .map((line, idx) => {
-      if (idx === 0) {
-        return escapeHtml(line.label);
-      }
-      const value = line.isWarning
-        ? `<span class="warning">${escapeHtml(line.value)}</span>`
-        : escapeHtml(line.value);
-      return `${escapeHtml(line.label)}<br />${value}`;
-    })
-    .join("<br /><br />");
-  labelPreview.innerHTML = html;
+  const selected = getSelectedLangs();
+  if (!selected.length) {
+    labelPreview.textContent = buildLabelText();
+    return;
+  }
+
+  const sections = selected.map((lang) => {
+    const labelText = buildLabelTextForLang(lang);
+    const title = LANGUAGE_TITLES[lang] || lang;
+    return `<strong>${title}</strong><br /><br />${labelText}`;
+  });
+  labelPreview.innerHTML = sections.join("<br /><br />");
 };
 
 const setProgress = (active, message) => {
@@ -111,6 +132,7 @@ const showToast = (message) => {
 };
 
 let historyCache = [];
+let translations = {};
 
 const renderHistory = (items) => {
   historyList.innerHTML = "";
@@ -152,6 +174,7 @@ const applyHistoryItem = (item) => {
   fields.expiry_date.value = item.form.expiry_date || "";
   fields.net_content.value = item.form.net_content || "";
   rawText.textContent = item.raw_text || "";
+  translations = {};
   updatePreview();
   showToast("저장된 분석을 불러왔습니다.");
   const parsedSection = document.getElementById("parsedSection");
@@ -200,6 +223,171 @@ const addHistoryItem = async (item) => {
   }
 };
 
+const LANGUAGE_TITLES = {
+  en: "English",
+  de: "Deutsch",
+  fr: "Français",
+  it: "Italiano",
+  es: "Español",
+};
+
+const LABELS = {
+  en: {
+    title: "YJN Partners CPSR Label Example",
+    product_name: "1. Product Name:",
+    function_claim: "2. Product Function:",
+    usage: "3. How to Use:",
+    warnings: "4. Warning / Precautions:",
+    ingredients: "5. Ingredients (INCI):",
+    expiry: "6. Expiry Date:",
+    rp: "7. EU Responsible Person:",
+    distributor: "8. Distributor Name and Address:",
+    origin: "9. Country of Origin:",
+    batch: "10. Batch Number:",
+    net: "11. Nominal Quantities:",
+    distributor_warning:
+      "Distributor info required. Final EU distribution label review not possible.",
+  },
+  de: {
+    title: "YJN Partners CPSR Etikettbeispiel",
+    product_name: "1. Produktname:",
+    function_claim: "2. Produktfunktion:",
+    usage: "3. Anwendung:",
+    warnings: "4. Warnhinweise / Vorsichtsmaßnahmen:",
+    ingredients: "5. Inhaltsstoffe (INCI):",
+    expiry: "6. Mindesthaltbarkeitsdatum:",
+    rp: "7. EU Verantwortliche Person:",
+    distributor: "8. Vertrieb / Adresse:",
+    origin: "9. Herkunftsland:",
+    batch: "10. Chargennummer:",
+    net: "11. Nenninhalt:",
+    distributor_warning:
+      "Distributor info required. Final EU distribution label review not possible.",
+  },
+  fr: {
+    title: "Exemple d’étiquette CPSR YJN Partners",
+    product_name: "1. Nom du produit :",
+    function_claim: "2. Fonction du produit :",
+    usage: "3. Mode d’emploi :",
+    warnings: "4. Avertissements / Précautions :",
+    ingredients: "5. Ingrédients (INCI) :",
+    expiry: "6. Date d’expiration :",
+    rp: "7. Personne responsable UE :",
+    distributor: "8. Distributeur / Adresse :",
+    origin: "9. Pays d’origine :",
+    batch: "10. Numéro de lot :",
+    net: "11. Contenu nominal :",
+    distributor_warning:
+      "Distributor info required. Final EU distribution label review not possible.",
+  },
+  it: {
+    title: "Esempio etichetta CPSR YJN Partners",
+    product_name: "1. Nome del prodotto:",
+    function_claim: "2. Funzione del prodotto:",
+    usage: "3. Modalità d’uso:",
+    warnings: "4. Avvertenze / Precauzioni:",
+    ingredients: "5. Ingredienti (INCI):",
+    expiry: "6. Data di scadenza:",
+    rp: "7. Persona responsabile UE:",
+    distributor: "8. Distributore / Indirizzo:",
+    origin: "9. Paese d’origine:",
+    batch: "10. Numero di lotto:",
+    net: "11. Quantità nominali:",
+    distributor_warning:
+      "Distributor info required. Final EU distribution label review not possible.",
+  },
+  es: {
+    title: "Ejemplo de etiqueta CPSR YJN Partners",
+    product_name: "1. Nombre del producto:",
+    function_claim: "2. Función del producto:",
+    usage: "3. Modo de uso:",
+    warnings: "4. Advertencias / Precauciones:",
+    ingredients: "5. Ingredientes (INCI):",
+    expiry: "6. Fecha de caducidad:",
+    rp: "7. Persona responsable UE:",
+    distributor: "8. Distribuidor / Dirección:",
+    origin: "9. País de origen:",
+    batch: "10. Número de lote:",
+    net: "11. Cantidades nominales:",
+    distributor_warning:
+      "Distributor info required. Final EU distribution label review not possible.",
+  },
+};
+
+const getSelectedLangs = () =>
+  Array.from(langOptions.querySelectorAll("input:checked")).map(
+    (input) => input.value
+  );
+
+const getTranslateFields = () => ({
+  product_name: fields.product_name.value,
+  function_claim: fields.function_claim.value,
+  usage_instructions: fields.usage_instructions.value,
+  warnings_precautions: fields.warnings_precautions.value,
+  expiry_date: fields.expiry_date.value,
+  country_of_origin: fields.country_of_origin.value,
+  batch_lot: fields.batch_lot.value,
+  net_content: fields.net_content.value,
+});
+
+const buildLabelTextForLang = (lang) => {
+  const labels = LABELS[lang] || LABELS.en;
+  const translated = translations[lang] || {};
+  const distributorValue = fields.distributor.value.trim();
+  const distributorText = distributorValue || labels.distributor_warning;
+  const distributorRendered = distributorValue
+    ? escapeHtml(distributorText)
+    : `<span class="warning">${escapeHtml(distributorText)}</span>`;
+
+  const lines = [
+    escapeHtml(labels.title),
+    "",
+    `${escapeHtml(labels.product_name)}<br />${escapeHtml(
+      translated.product_name || "(번역 필요)"
+    )}`,
+    "",
+    `${escapeHtml(labels.function_claim)}<br />${escapeHtml(
+      translated.function_claim || "(번역 필요)"
+    )}`,
+    "",
+    `${escapeHtml(labels.usage)}<br />${escapeHtml(
+      translated.usage_instructions || "(번역 필요)"
+    )}`,
+    "",
+    `${escapeHtml(labels.warnings)}<br />${escapeHtml(
+      translated.warnings_precautions || "(번역 필요)"
+    )}`,
+    "",
+    `${escapeHtml(labels.ingredients)}<br />${escapeHtml(
+      fields.inci_ingredients.value || "N/A"
+    )}`,
+    "",
+    `${escapeHtml(labels.expiry)}<br />${escapeHtml(
+      translated.expiry_date || "(번역 필요)"
+    )}`,
+    "",
+    `${escapeHtml(labels.rp)}<br />${escapeHtml(
+      fields.eu_responsible_person.value || defaultRp
+    )}`,
+    "",
+    `${escapeHtml(labels.distributor)}<br />${distributorRendered}`,
+    "",
+    `${escapeHtml(labels.origin)}<br />${escapeHtml(
+      translated.country_of_origin || "(번역 필요)"
+    )}`,
+    "",
+    `${escapeHtml(labels.batch)}<br />${escapeHtml(
+      translated.batch_lot || "(번역 필요)"
+    )}`,
+    "",
+    `${escapeHtml(labels.net)}<br />${escapeHtml(
+      translated.net_content || "(번역 필요)"
+    )}`,
+  ];
+
+  return lines.join("<br />");
+};
+
 const startOcrSteps = () => {
   const steps = [
     "파일 업로드 중...",
@@ -224,6 +412,9 @@ const setSelectedFile = (file) => {
 
 Object.values(fields).forEach((input) => {
   input.addEventListener("input", updatePreview);
+  input.addEventListener("input", () => {
+    translations = {};
+  });
 });
 
 updatePreview();
@@ -308,6 +499,7 @@ el("btnOcr").addEventListener("click", async () => {
       fields.eu_responsible_person.value = parsed.responsible_person;
     }
 
+    translations = {};
     updatePreview();
     stopSteps();
     setProgress(false, "OCR 완료. 내용을 확인해 주세요.");
@@ -337,6 +529,37 @@ el("btnOcr").addEventListener("click", async () => {
   } catch (err) {
     stopSteps();
     setProgress(false, `OCR 오류: ${err.message}`);
+  }
+});
+
+translateBtn.addEventListener("click", async () => {
+  const targets = getSelectedLangs();
+  if (!targets.length) {
+    showToast("번역할 언어를 선택해 주세요.");
+    return;
+  }
+  const apiBase = getApiBase();
+  const payload = {
+    targets,
+    fields: getTranslateFields(),
+  };
+  setProgress(true, "번역 중...");
+  try {
+    const resp = await fetch(`${apiBase}/api/translate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!resp.ok) {
+      const detail = await resp.text();
+      throw new Error(detail || "Translate failed");
+    }
+    const data = await resp.json();
+    translations = data.translations || {};
+    setProgress(false, "번역 완료.");
+    updatePreview();
+  } catch (err) {
+    setProgress(false, `번역 오류: ${err.message}`);
   }
 });
 
@@ -403,6 +626,45 @@ el("btnPdf").addEventListener("click", async () => {
   const apiBase = getApiBase();
   if (!apiBase) {
     status.textContent = "API 주소가 설정되지 않았습니다.";
+    return;
+  }
+
+  const selectedLangs = getSelectedLangs();
+  if (selectedLangs.length) {
+    const missing = selectedLangs.filter((lang) => !translations[lang]);
+    if (missing.length) {
+      showToast("먼저 번역을 적용해 주세요.");
+      return;
+    }
+    const sections = selectedLangs.map((lang) => ({
+      title: LANGUAGE_TITLES[lang] || lang,
+      text: buildLabelTextForLang(lang).replace(/<br \\/>/g, "\n"),
+    }));
+
+    setProgress(true, "PDF 생성 중...");
+    try {
+      const resp = await fetch(`${apiBase}/api/pdf-multi`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sections }),
+      });
+      if (!resp.ok) {
+        const detail = await resp.text();
+        throw new Error(detail || "PDF generation failed");
+      }
+      const blob = await resp.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${fields.product_name.value || "label"}_multi.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      setProgress(false, "PDF 생성 완료.");
+    } catch (err) {
+      setProgress(false, `PDF 오류: ${err.message}`);
+    }
     return;
   }
 
