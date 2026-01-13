@@ -638,7 +638,7 @@ el("btnPdf").addEventListener("click", async () => {
     }
     const sections = selectedLangs.map((lang) => ({
       title: LANGUAGE_TITLES[lang] || lang,
-      text: buildLabelTextForLang(lang).replace(/<br \\/>/g, "\n"),
+      text: buildLabelTextForLang(lang).replace(/<br\s*\/?>/g, "\n"),
     }));
 
     setProgress(true, "PDF 생성 중...");
