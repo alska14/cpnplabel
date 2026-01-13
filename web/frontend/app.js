@@ -283,7 +283,13 @@ el("btnOcr").addEventListener("click", async () => {
 
     const parsed = data.parsed || {};
     fields.product_name.value = parsed.product_name || "";
-    fields.function_claim.value = parsed.function_claim || "";
+    const description = (parsed.description || "").trim();
+    const functionClaim = (parsed.function_claim || "").trim();
+    if (description && functionClaim) {
+      fields.function_claim.value = `${description} / ${functionClaim}`;
+    } else {
+      fields.function_claim.value = description || functionClaim || "";
+    }
     fields.usage_instructions.value = parsed.usage_instructions || "";
     fields.warnings_precautions.value = parsed.warnings_precautions || "";
     fields.inci_ingredients.value = parsed.inci_ingredients || "";
