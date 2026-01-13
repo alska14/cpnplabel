@@ -105,7 +105,14 @@ def _translate_texts(texts: List[str], target: str) -> List[str]:
     payload = {"q": texts, "target": target, "format": "text"}
     try:
         resp = requests.post(url, json=payload, timeout=15)
-        resp.raise_for_status()
+        if not resp.ok:
+            error_text = resp.text[:1000]
+            raise HTTPException(
+                status_code=resp.status_code,
+                detail=f"Translate API error: {error_text}",
+            )
+    except HTTPException:
+        raise
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"Translate API error: {exc}")
     data = resp.json()
