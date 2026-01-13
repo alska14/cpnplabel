@@ -101,7 +101,9 @@ const buildLabelText = () => {
 const updatePreview = () => {
   const selected = getSelectedLangs();
   if (!selected.length) {
-    langTabs.innerHTML = "";
+    if (langTabs) {
+      langTabs.innerHTML = "";
+    }
     labelPreview.textContent = buildLabelText();
     return;
   }
@@ -139,6 +141,9 @@ let translations = {};
 let activeLang = "";
 
 const renderTabs = (langs) => {
+  if (!langTabs) {
+    return;
+  }
   langTabs.innerHTML = "";
   if (!langs.length) {
     return;
@@ -587,14 +592,16 @@ translateBtn.addEventListener("click", async () => {
   }
 });
 
-langTabs.addEventListener("click", (event) => {
-  const button = event.target.closest(".lang-tab");
-  if (!button) {
-    return;
-  }
-  activeLang = button.dataset.lang || "";
-  updatePreview();
-});
+if (langTabs) {
+  langTabs.addEventListener("click", (event) => {
+    const button = event.target.closest(".lang-tab");
+    if (!button) {
+      return;
+    }
+    activeLang = button.dataset.lang || "";
+    updatePreview();
+  });
+}
 
 historyList.addEventListener("click", (event) => {
   const deleteBtn = event.target.closest(".history-delete");
