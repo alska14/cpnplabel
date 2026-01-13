@@ -223,6 +223,11 @@ h1 {
   width: 100%;
 }
 
+.field input::placeholder,
+.field textarea::placeholder {
+  color: #b8a89a;
+}
+
 .field textarea {
   resize: vertical;
 }
@@ -377,6 +382,11 @@ h1 {
   border: 1px solid var(--edge);
   padding: 16px;
   min-height: 260px;
+}
+
+.preview .warning {
+  color: #c2472f;
+  font-weight: 600;
 }
 
 .raw {

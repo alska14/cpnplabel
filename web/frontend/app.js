@@ -39,49 +39,56 @@ const getApiBase = () => {
 
 el("apiBase").value = DEFAULT_API_BASE;
 
-const buildLabelText = () => {
-  const lines = [
-    "YJN Partners CPSR Label Example",
-    "",
-    "1. Product Name:",
-    fields.product_name.value || "N/A",
-    "",
-    "2. Product Function:",
-    fields.function_claim.value || "N/A",
-    "",
-    "3. How to Use:",
-    fields.usage_instructions.value || "N/A",
-    "",
-    "4. Warning / Precautions:",
-    fields.warnings_precautions.value || "N/A",
-    "",
-    "5. Ingredients (INCI):",
-    fields.inci_ingredients.value || "N/A",
-    "",
-    "6. Expiry Date:",
-    fields.expiry_date.value || "Shown on the package",
-    "",
-    "7. EU Responsible Person:",
-    fields.eu_responsible_person.value || defaultRp,
-    "",
-    "8. Distributor Name and Address:",
-    fields.distributor.value || "Distributor info required.",
-    "",
-    "9. Country of Origin:",
-    fields.country_of_origin.value || "Made in Korea",
-    "",
-    "10. Batch Number:",
-    fields.batch_lot.value || "Shown on the package",
-    "",
-    "11. Nominal Quantities:",
-    fields.net_content.value || "N/A",
-  ];
+const escapeHtml = (value) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
-  return lines.join("\n");
+const oneLine = (text) => text.replace(/\s+/g, " ").trim();
+
+const buildLabelLines = () => {
+  const distributorFallback =
+    "Distributor 정보가 없을 경우, 유럽 유통용 최종 라벨 검토 불가.";
+  const distributorValue = fields.distributor.value.trim();
+  const distributorText = distributorValue || distributorFallback;
+
+  return [
+    { label: "YJN Partners CPSR Label Example", value: "" },
+    { label: "1. Product Name:", value: fields.product_name.value || "N/A" },
+    { label: "2. Product Function:", value: fields.function_claim.value || "N/A" },
+    { label: "3. How to Use:", value: fields.usage_instructions.value || "N/A" },
+    { label: "4. Warning / Precautions:", value: fields.warnings_precautions.value || "N/A" },
+    { label: "5. Ingredients (INCI):", value: fields.inci_ingredients.value || "N/A" },
+    { label: "6. Expiry Date:", value: fields.expiry_date.value || "Shown on the package" },
+    { label: "7. EU Responsible Person:", value: fields.eu_responsible_person.value || defaultRp },
+    {
+      label: "8. Distributor Name and Address:",
+      value: oneLine(distributorText),
+      isWarning: !distributorValue,
+    },
+    { label: "9. Country of Origin:", value: fields.country_of_origin.value || "Made in Korea" },
+    { label: "10. Batch Number:", value: fields.batch_lot.value || "Shown on the package" },
+    { label: "11. Nominal Quantities:", value: fields.net_content.value || "N/A" },
+  ];
 };
 
 const updatePreview = () => {
-  labelPreview.textContent = buildLabelText();
+  const lines = buildLabelLines();
+  const html = lines
+    .map((line, idx) => {
+      if (idx === 0) {
+        return escapeHtml(line.label);
+      }
+      const value = line.isWarning
+        ? `<span class="warning">${escapeHtml(line.value)}</span>`
+        : escapeHtml(line.value);
+      return `${escapeHtml(line.label)}<br />${value}`;
+    })
+    .join("<br /><br />");
+  labelPreview.innerHTML = html;
 };
 
 const setProgress = (active, message) => {

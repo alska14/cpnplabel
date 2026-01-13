@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from google.cloud import vision
 from google.cloud import storage
 from google.cloud import firestore
+from PyPDF2 import PdfReader
 from pydantic import BaseModel
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
@@ -164,6 +165,11 @@ def _call_ocr_api(file_path: str) -> str:
     _, ext = os.path.splitext(file_path)
     ext = ext.lower()
 
+    if ext == ".pdf":
+        extracted = _extract_pdf_text(file_path)
+        if len(extracted) >= 500:
+            return extracted
+
     if ext in [".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp", ".tif", ".tiff"]:
         try:
             with open(file_path, "rb") as f:
@@ -242,6 +248,17 @@ def _call_ocr_api(file_path: str) -> str:
             pass
 
     return full_text.strip() if full_text.strip() else "[NO_RESULT]"
+
+
+def _extract_pdf_text(file_path: str) -> str:
+    try:
+        reader = PdfReader(file_path)
+        parts = []
+        for page in reader.pages:
+            parts.append(page.extract_text() or "")
+        return "\n".join(parts).strip()
+    except Exception:
+        return ""
 
 
 def _clean_field_text(text: str) -> str:
@@ -338,7 +355,8 @@ def build_label_text(form: LabelForm) -> str:
         form.eu_responsible_person or DEFAULT_EU_RP,
         "",
         "8. Distributor Name and Address:",
-        form.distributor or "Distributor info required.",
+        form.distributor
+        or "Distributor 정보가 없을 경우, 유럽 유통용 최종 라벨 검토 불가.",
         "",
         "9. Country of Origin:",
         form.country_of_origin or "Made in Korea",
