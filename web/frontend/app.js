@@ -25,6 +25,7 @@ const dropzone = el("dropzone");
 const fileInput = el("fileInput");
 const langOptions = el("langOptions");
 const translateBtn = el("translateBtn");
+const langTabs = el("langTabs");
 
 const defaultRp =
   "YJN Europe s.r.o.\n6F, M.R. Stefanika, 010 01, Zilina, Slovak Republic";
@@ -100,16 +101,18 @@ const buildLabelText = () => {
 const updatePreview = () => {
   const selected = getSelectedLangs();
   if (!selected.length) {
+    langTabs.innerHTML = "";
     labelPreview.textContent = buildLabelText();
     return;
   }
 
-  const sections = selected.map((lang) => {
-    const labelText = buildLabelTextForLang(lang);
-    const title = LANGUAGE_TITLES[lang] || lang;
-    return `<strong>${title}</strong><br /><br />${labelText}`;
-  });
-  labelPreview.innerHTML = sections.join("<br /><br />");
+  if (!activeLang || !selected.includes(activeLang)) {
+    activeLang = selected[0];
+  }
+
+  renderTabs(selected);
+  const labelText = buildLabelTextForLang(activeLang);
+  labelPreview.innerHTML = `<strong>${LANGUAGE_TITLES[activeLang]}</strong><br /><br />${labelText}`;
 };
 
 const setProgress = (active, message) => {
@@ -133,6 +136,25 @@ const showToast = (message) => {
 
 let historyCache = [];
 let translations = {};
+let activeLang = "";
+
+const renderTabs = (langs) => {
+  langTabs.innerHTML = "";
+  if (!langs.length) {
+    return;
+  }
+  langs.forEach((lang) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lang-tab";
+    btn.dataset.lang = lang;
+    btn.textContent = LANGUAGE_TITLES[lang] || lang;
+    if (lang === activeLang) {
+      btn.classList.add("active");
+    }
+    langTabs.appendChild(btn);
+  });
+};
 
 const renderHistory = (items) => {
   historyList.innerHTML = "";
@@ -414,6 +436,7 @@ Object.values(fields).forEach((input) => {
   input.addEventListener("input", updatePreview);
   input.addEventListener("input", () => {
     translations = {};
+    activeLang = "";
   });
 });
 
@@ -556,11 +579,21 @@ translateBtn.addEventListener("click", async () => {
     }
     const data = await resp.json();
     translations = data.translations || {};
+    activeLang = targets[0] || "";
     setProgress(false, "번역 완료.");
     updatePreview();
   } catch (err) {
     setProgress(false, `번역 오류: ${err.message}`);
   }
+});
+
+langTabs.addEventListener("click", (event) => {
+  const button = event.target.closest(".lang-tab");
+  if (!button) {
+    return;
+  }
+  activeLang = button.dataset.lang || "";
+  updatePreview();
 });
 
 historyList.addEventListener("click", (event) => {
